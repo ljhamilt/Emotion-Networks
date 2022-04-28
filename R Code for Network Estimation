@@ -1,0 +1,37 @@
+Network Estimation (see Epskamp et al., 2018a,b)
+
+library(bootnet)
+
+Network <- estimateNetwork(Data, default = "EBICglasso", threshold = TRUE)
+
+plot(Network, layout = "circle", cut = 0.17, legend = FALSE)
+
+library(qgraph)
+
+centralityPlot(Network, include = c("Strength", "Betweenness", "Closeness"))
+
+
+
+Bootstrapping for Evaluating Accuracy (see Epskamp et al., 2018a)
+
+boot1 <- bootnet(Network, nBoots = 1000, default = "EBICglasso", type = "case", statistics = c("edge", "strength", "closeness", "betweenness"))
+
+print(boot1)
+
+plot(boot1, labels=FALSE, order="sample")
+
+boot2 <- bootnet(Network, nBoots = 1000, type = "case", default = "EBICglasso", type = "case", statistics = c("edge", "strength", "closeness", "betweenness"))
+
+CorStability(boot2)
+
+
+Comparing Networks (see van Borkulo et al., 2016; 2017)
+(Note: Switch “paired” from FALSE to TRUE for time-based comparisons) 
+
+library(NetworkComparisonTest)
+
+NCT(Network1, Network2, it = 100, paired=FALSE, weighted=TRUE, abs=TRUE,
+    test.edges=TRUE, edges="all", progressbar=TRUE, p.adjust.methods= c("bonferroni"), 
+    test.centrality=TRUE, 
+    centrality=c("strength","closeness","betweenness","expectedInfluence"),nodes="all",
+    verbose = TRUE)
